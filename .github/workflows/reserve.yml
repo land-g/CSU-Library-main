@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '01 06 * * *'
+    - cron: '47 10 * * *'
 
 jobs:
   reserve:
@@ -29,8 +29,8 @@ jobs:
         python3 helper.py --action 'reserve' --userid $user --password $pwd
     - name: Commit
       run: |
-        git config --global user.email founder.yu@foxmail.com
-        git config --global user.name founder-yu
+        git config --global user.email 1950344988@qq.com
+        git config --global user.name gou
         git add .
         git commit -m "Update library.log" -a
     - name: Push changes
