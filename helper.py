@@ -101,6 +101,7 @@ class CSULibrary(object):
         预约指定位置,返回结果消息
         '''
         self.login()
+        print("执行到这里。。。。。")
 
         access_token = requests.utils.dict_from_cookiejar(self.client.cookies)[
             'access_token']
@@ -170,7 +171,7 @@ if __name__ == "__main__":
                         level=logging.INFO, format=LOG_FORMAT)
 
     helper = CSULibrary(args.userid, args.password)
-
+    helper.reserve()
     # 添加异常处理
     try:
         if args.action == 'reserve':

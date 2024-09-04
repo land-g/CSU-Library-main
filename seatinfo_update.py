@@ -3,13 +3,14 @@ import pandas
 import datetime
 import requests
 
+
 class GetSeatInfo():
     def __init__(self):
         self.client = requests.Session()
         self.headers = {
             'Referer': 'http://libzw.csu.edu.cn/home/web/seat/area/1'
         }
-        
+
     def get_date(self):
         '''
         以形如2022-2-2的形式返回明天的日期
@@ -19,8 +20,8 @@ class GetSeatInfo():
             name='Asia/Shanghai',
         )
         # 北京时间
-        today = datetime.datetime.now(tz = SHA_TZ).date()
-        tomorrow = today + datetime.timedelta(days = 1)
+        today = datetime.datetime.now(tz=SHA_TZ).date()
+        tomorrow = today + datetime.timedelta(days=1)
         return "%d-%d-%d" % (tomorrow.year, tomorrow.month, tomorrow.day)
 
     def get_seat_info(self, area, csv):
@@ -33,13 +34,14 @@ class GetSeatInfo():
         :param area: 区域id号，其中区域可以是诸如 新校区、新校区2楼、新校区2楼A区 此类的区域
         :csv: csv文件保存位置
         '''
-        response = self.client.get("http://libzw.csu.edu.cn/api.php/v3areas/"+str(area), headers = self.headers)
+        response = self.client.get("http://libzw.csu.edu.cn/api.php/v3areas/" + str(area), headers=self.headers)
         childArea = response.json()["data"]["list"]["childArea"]
-        if childArea == None :
-            url2 = "http://libzw.csu.edu.cn/api.php/spaces_old?area=" + str(area) + "&segment=" + str(self.get_booktime_id(area)[1]) + "&day=" + self.get_date() + "&startTime=07:30&endTime=22:00"
-            response2 = self.client.get(url2, headers = self.headers)
-            df = pandas.DataFrame(data = response2.json()["data"]["list"])
-            df.to_csv(csv, mode = 'a', header = 0, index = 0)
+        if childArea == None:
+            url2 = "http://libzw.csu.edu.cn/api.php/spaces_old?area=" + str(area) + "&segment=" + str(
+                self.get_booktime_id(area)[1]) + "&day=" + self.get_date() + "&startTime=07:30&endTime=22:00"
+            response2 = self.client.get(url2, headers=self.headers)
+            df = pandas.DataFrame(data=response2.json()["data"]["list"])
+            df.to_csv(csv, mode='a', header=0, index=0)
             return
         else:
             for i in childArea:
@@ -52,11 +54,12 @@ class GetSeatInfo():
         :param i: area编号
         '''
         url = "http://libzw.csu.edu.cn/api.php/v3areadays/" + str(i)
-        response = self.client.get(url, headers = self.headers)
+        response = self.client.get(url, headers=self.headers)
         return response.json()["data"]["list"][0]["id"], response.json()["data"]["list"][1]["id"]
 
+
 collector = GetSeatInfo()
-collector.get_seat_info(1, "./新校区座位表.csv") #新校区id为1
-collector.get_seat_info(28, "./铁道校区座位表.csv") #铁道校区id为28
-collector.get_seat_info(71, "./湘雅新校区座位表.csv") #湘雅新校区id为71
-collector.get_seat_info(94, "./本部校区座位表.csv") #本部校区id为94
+collector.get_seat_info(1, "./新校区座位表.csv")  # 新校区id为1
+collector.get_seat_info(28, "./铁道校区座位表.csv")  # 铁道校区id为28
+collector.get_seat_info(71, "./湘雅新校区座位表.csv")  # 湘雅新校区id为71
+collector.get_seat_info(94, "./本部校区座位表.csv")  # 本部校区id为94
